@@ -1,0 +1,3098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1120">
+    <title>LexiForge — Advanced English Learning</title>
+
+    <!-- Tailwind enhancement when online -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!--
+        Local fallback styling:
+        The application remains functional and visually complete
+        even when the Tailwind CDN is unavailable/offline.
+    -->
+    <style>
+        :root{
+            --bg:#070b14;
+            --panel:#0d1424;
+            --panel2:#111b2e;
+            --border:#24324a;
+            --text:#e7edf7;
+            --muted:#91a0b8;
+            --primary:#38bdf8;
+            --primary2:#6366f1;
+            --success:#34d399;
+            --danger:#fb7185;
+            --warning:#fbbf24;
+            --shadow:0 20px 60px rgba(0,0,0,.32);
+        }
+
+        *{box-sizing:border-box}
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            background:
+                radial-gradient(circle at 15% 10%,rgba(56,189,248,.08),transparent 28%),
+                radial-gradient(circle at 85% 20%,rgba(99,102,241,.09),transparent 28%),
+                var(--bg);
+            color:var(--text);
+            font-family:Inter,Segoe UI,Arial,sans-serif;
+        }
+
+        button,input,textarea,select{
+            font:inherit;
+        }
+
+        button{
+            cursor:pointer;
+        }
+
+        .app-shell{
+            display:flex;
+            min-height:100vh;
+        }
+
+        .sidebar{
+            width:285px;
+            min-width:285px;
+            background:rgba(8,14,27,.94);
+            border-right:1px solid var(--border);
+            padding:22px;
+            position:fixed;
+            inset:0 auto 0 0;
+            overflow-y:auto;
+            z-index:50;
+            backdrop-filter:blur(18px);
+        }
+
+        .main{
+            margin-left:285px;
+            width:calc(100% - 285px);
+            min-width:0;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:28px;
+        }
+
+        .brand-icon{
+            width:44px;
+            height:44px;
+            border-radius:14px;
+            display:grid;
+            place-items:center;
+            background:linear-gradient(135deg,var(--primary2),var(--primary));
+            color:white;
+            font-weight:900;
+            box-shadow:0 12px 30px rgba(56,189,248,.18);
+        }
+
+        .brand-title{
+            font-weight:900;
+            font-size:18px;
+        }
+
+        .brand-sub{
+            color:var(--muted);
+            font-size:11px;
+            margin-top:2px;
+        }
+
+        .nav-section{
+            color:#64748b;
+            text-transform:uppercase;
+            letter-spacing:.12em;
+            font-size:10px;
+            font-weight:800;
+            margin:22px 0 9px;
+        }
+
+        .nav-btn{
+            width:100%;
+            border:1px solid transparent;
+            color:#aab7ca;
+            background:transparent;
+            padding:11px 13px;
+            border-radius:11px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            text-align:left;
+            transition:.2s;
+            margin-bottom:5px;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active{
+            background:#111c30;
+            border-color:#263650;
+            color:white;
+        }
+
+        .nav-icon{
+            width:19px;
+            text-align:center;
+        }
+
+        .progress-box{
+            margin-top:24px;
+            padding:15px;
+            background:linear-gradient(145deg,#0d1729,#0a1120);
+            border:1px solid var(--border);
+            border-radius:15px;
+        }
+
+        .progress-label{
+            display:flex;
+            justify-content:space-between;
+            font-size:12px;
+            margin-bottom:9px;
+            color:#aab7ca;
+        }
+
+        .progress-track{
+            height:7px;
+            background:#1c293e;
+            border-radius:99px;
+            overflow:hidden;
+        }
+
+        .progress-fill{
+            height:100%;
+            border-radius:99px;
+            background:linear-gradient(90deg,var(--primary2),var(--primary));
+            transition:.35s;
+        }
+
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:30;
+            height:72px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 30px;
+            background:rgba(7,11,20,.82);
+            border-bottom:1px solid rgba(36,50,74,.75);
+            backdrop-filter:blur(18px);
+        }
+
+        .top-title{
+            font-size:15px;
+            font-weight:800;
+        }
+
+        .top-subtitle{
+            color:var(--muted);
+            font-size:12px;
+            margin-top:2px;
+        }
+
+        .top-actions{
+            display:flex;
+            gap:9px;
+        }
+
+        .page{
+            padding:30px;
+            max-width:1500px;
+            margin:auto;
+        }
+
+        .hero{
+            padding:30px;
+            border:1px solid var(--border);
+            border-radius:22px;
+            background:
+                linear-gradient(135deg,rgba(99,102,241,.12),rgba(56,189,248,.04)),
+                rgba(13,20,36,.8);
+            box-shadow:var(--shadow);
+            margin-bottom:24px;
+        }
+
+        .eyebrow{
+            color:var(--primary);
+            font-size:11px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.15em;
+            margin-bottom:10px;
+        }
+
+        .hero h1{
+            font-size:clamp(28px,4vw,48px);
+            line-height:1.05;
+            margin:0;
+            max-width:800px;
+            letter-spacing:-.04em;
+        }
+
+        .hero p{
+            color:var(--muted);
+            max-width:780px;
+            line-height:1.7;
+            margin:15px 0 0;
+        }
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(4,minmax(0,1fr));
+            gap:14px;
+            margin-top:25px;
+        }
+
+        .stat{
+            border:1px solid var(--border);
+            border-radius:15px;
+            background:#0b1424;
+            padding:17px;
+        }
+
+        .stat-label{
+            color:#8190a7;
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.08em;
+        }
+
+        .stat-value{
+            font-size:27px;
+            font-weight:900;
+            margin-top:7px;
+        }
+
+        .section-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            margin:30px 0 14px;
+        }
+
+        .section-head h2{
+            margin:0;
+            font-size:20px;
+        }
+
+        .section-head p{
+            margin:4px 0 0;
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .cards-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+            gap:15px;
+        }
+
+        .word-card{
+            position:relative;
+            padding:20px;
+            border-radius:18px;
+            border:1px solid var(--border);
+            background:linear-gradient(145deg,#101a2d,#0b1322);
+            min-height:205px;
+            transition:.22s;
+            overflow:hidden;
+        }
+
+        .word-card:hover{
+            transform:translateY(-3px);
+            border-color:#3a506f;
+            box-shadow:0 18px 35px rgba(0,0,0,.22);
+        }
+
+        .word-card.locked{
+            opacity:.58;
+        }
+
+        .word-number{
+            color:#52637e;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .word{
+            font-size:27px;
+            font-weight:900;
+            margin-top:9px;
+            letter-spacing:-.025em;
+        }
+
+        .pos{
+            display:inline-flex;
+            margin-top:8px;
+            border:1px solid #31435f;
+            background:#152136;
+            color:#9fb0c9;
+            padding:4px 8px;
+            border-radius:7px;
+            font-size:10px;
+            font-weight:800;
+        }
+
+        .translation{
+            color:#aebbd0;
+            margin-top:13px;
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .card-status{
+            position:absolute;
+            top:17px;
+            right:17px;
+            font-size:17px;
+        }
+
+        .btn{
+            border:1px solid var(--border);
+            background:#111c2f;
+            color:#d9e3f1;
+            border-radius:10px;
+            padding:9px 13px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            font-size:12px;
+            font-weight:800;
+            transition:.2s;
+        }
+
+        .btn:hover{
+            background:#18263e;
+            border-color:#38506f;
+        }
+
+        .btn.primary{
+            background:linear-gradient(135deg,#4f46e5,#0ea5e9);
+            border-color:transparent;
+            color:white;
+        }
+
+        .btn.primary:hover{
+            filter:brightness(1.1);
+        }
+
+        .btn.success{
+            background:#0d2a25;
+            border-color:#175a4b;
+            color:#72e5c1;
+        }
+
+        .btn.danger{
+            background:#2b111a;
+            border-color:#5c202e;
+            color:#fb9aaa;
+        }
+
+        .btn.warning{
+            background:#2b210c;
+            border-color:#5e4712;
+            color:#fcd66b;
+        }
+
+        .btn:disabled{
+            opacity:.4;
+            cursor:not-allowed;
+        }
+
+        .lesson-shell{
+            border:1px solid var(--border);
+            border-radius:22px;
+            background:#0b1322;
+            overflow:hidden;
+        }
+
+        .lesson-header{
+            padding:25px;
+            border-bottom:1px solid var(--border);
+            background:linear-gradient(135deg,#111c30,#0c1525);
+        }
+
+        .lesson-word{
+            font-size:38px;
+            font-weight:950;
+            letter-spacing:-.04em;
+        }
+
+        .lesson-meta{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            border:1px solid #30425e;
+            background:#142035;
+            color:#a9b8cc;
+            padding:5px 9px;
+            border-radius:8px;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .lesson-tabs{
+            display:flex;
+            gap:5px;
+            overflow-x:auto;
+            padding:12px 18px;
+            border-bottom:1px solid var(--border);
+            background:#0a1220;
+        }
+
+        .lesson-tab{
+            white-space:nowrap;
+            border:1px solid transparent;
+            background:transparent;
+            color:#8493aa;
+            padding:9px 12px;
+            border-radius:9px;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .lesson-tab.active{
+            background:#16243a;
+            border-color:#30445f;
+            color:white;
+        }
+
+        .lesson-content{
+            padding:27px;
+            min-height:500px;
+        }
+
+        .content-title{
+            font-size:22px;
+            font-weight:900;
+            margin:0 0 6px;
+        }
+
+        .content-sub{
+            color:var(--muted);
+            font-size:13px;
+            margin-bottom:22px;
+        }
+
+        .definition-box{
+            border:1px solid #284a63;
+            background:linear-gradient(135deg,#0c2030,#0c1726);
+            border-radius:16px;
+            padding:22px;
+            margin-bottom:18px;
+        }
+
+        .definition-main{
+            font-size:18px;
+            line-height:1.7;
+        }
+
+        .arabic{
+            color:#7dd3fc;
+            font-size:15px;
+            line-height:1.8;
+            margin-top:10px;
+        }
+
+        .example-box{
+            padding:17px;
+            border-radius:13px;
+            background:#101b2e;
+            border:1px solid #23344e;
+            margin-top:13px;
+        }
+
+        .copy-row{
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+        }
+
+        .copyable{
+            flex:1;
+        }
+
+        .mini-copy{
+            flex-shrink:0;
+            padding:7px 9px;
+            border:1px solid #30415d;
+            background:#101c30;
+            color:#8ea0b9;
+            border-radius:8px;
+            font-size:11px;
+        }
+
+        .family-grid,
+        .relation-grid,
+        .context-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:14px;
+        }
+
+        .info-card{
+            border:1px solid var(--border);
+            background:#101a2b;
+            border-radius:14px;
+            padding:18px;
+        }
+
+        .info-label{
+            color:#6f819d;
+            font-size:10px;
+            text-transform:uppercase;
+            font-weight:900;
+            letter-spacing:.1em;
+        }
+
+        .info-word{
+            font-size:21px;
+            font-weight:900;
+            margin:7px 0;
+        }
+
+        .info-text{
+            color:#aebbd0;
+            line-height:1.6;
+            font-size:13px;
+        }
+
+        .dialogue{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .dialogue-row{
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+        }
+
+        .speaker{
+            width:35px;
+            height:35px;
+            flex-shrink:0;
+            border-radius:10px;
+            background:#182842;
+            display:grid;
+            place-items:center;
+            font-size:11px;
+            font-weight:900;
+            color:#8fdcff;
+        }
+
+        .bubble{
+            flex:1;
+            padding:13px 15px;
+            border:1px solid #263853;
+            border-radius:13px;
+            background:#101b2e;
+        }
+
+        .bubble-en{
+            line-height:1.6;
+        }
+
+        .bubble-ar{
+            color:#8ebbd2;
+            margin-top:7px;
+            font-size:12px;
+            line-height:1.7;
+        }
+
+        .context-number{
+            width:32px;
+            height:32px;
+            border-radius:9px;
+            background:#182843;
+            color:#79d9ff;
+            display:grid;
+            place-items:center;
+            font-weight:900;
+            margin-bottom:12px;
+        }
+
+        .context-title{
+            font-size:16px;
+            font-weight:900;
+            margin-bottom:7px;
+        }
+
+        .context-example{
+            margin-top:12px;
+            color:#d6e1ee;
+            line-height:1.6;
+            font-style:italic;
+        }
+
+        .lesson-footer{
+            border-top:1px solid var(--border);
+            padding:17px 25px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            background:#0a1220;
+        }
+
+        .quiz-shell{
+            max-width:900px;
+            margin:auto;
+        }
+
+        .quiz-progress{
+            height:6px;
+            background:#1b2940;
+            border-radius:99px;
+            overflow:hidden;
+            margin:16px 0 25px;
+        }
+
+        .quiz-progress > div{
+            height:100%;
+            background:linear-gradient(90deg,var(--primary2),var(--primary));
+        }
+
+        .question-card{
+            border:1px solid var(--border);
+            background:#0d1728;
+            border-radius:18px;
+            padding:24px;
+        }
+
+        .question-number{
+            color:#71839e;
+            font-size:11px;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.1em;
+        }
+
+        .question{
+            font-size:21px;
+            font-weight:900;
+            line-height:1.5;
+            margin:10px 0 22px;
+        }
+
+        .options{
+            display:grid;
+            gap:10px;
+        }
+
+        .option{
+            border:1px solid #293b57;
+            background:#101c2f;
+            color:#c6d2e2;
+            border-radius:12px;
+            padding:14px;
+            text-align:left;
+            transition:.18s;
+        }
+
+        .option:hover{
+            border-color:#476485;
+            background:#15243a;
+        }
+
+        .option.selected{
+            border-color:#38bdf8;
+            background:#102c3e;
+            color:white;
+        }
+
+        .option.correct{
+            border-color:#22c55e;
+            background:#0d291f;
+        }
+
+        .option.wrong{
+            border-color:#ef4444;
+            background:#2a1218;
+        }
+
+        .quiz-result{
+            margin-top:17px;
+            padding:16px;
+            border-radius:13px;
+            border:1px solid var(--border);
+        }
+
+        .quiz-result.pass{
+            background:#0d291f;
+            border-color:#185a44;
+        }
+
+        .quiz-result.fail{
+            background:#2a1218;
+            border-color:#5a222e;
+        }
+
+        .editor{
+            display:grid;
+            gap:18px;
+        }
+
+        .editor-section{
+            border:1px solid var(--border);
+            background:#0c1525;
+            border-radius:17px;
+            padding:20px;
+        }
+
+        .editor-section h3{
+            margin:0 0 15px;
+            font-size:16px;
+        }
+
+        .form-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:13px;
+        }
+
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap:7px;
+        }
+
+        .field.full{
+            grid-column:1/-1;
+        }
+
+        .field label{
+            color:#8192ab;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .input,
+        .textarea,
+        .select{
+            width:100%;
+            border:1px solid #293b57;
+            background:#0a1322;
+            color:#e2eaf4;
+            border-radius:10px;
+            padding:11px 12px;
+            outline:none;
+        }
+
+        .textarea{
+            min-height:100px;
+            resize:vertical;
+            line-height:1.6;
+        }
+
+        .input:focus,
+        .textarea:focus,
+        .select:focus{
+            border-color:#38bdf8;
+            box-shadow:0 0 0 3px rgba(56,189,248,.08);
+        }
+
+        .dialogue-editor-row,
+        .context-editor-row,
+        .family-editor-row,
+        .relation-editor-row{
+            border:1px solid #22334d;
+            background:#0a1322;
+            padding:14px;
+            border-radius:12px;
+            margin-bottom:10px;
+        }
+
+        .modal{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,.72);
+            backdrop-filter:blur(8px);
+            z-index:100;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
+
+        .modal.hidden{
+            display:none;
+        }
+
+        .modal-card{
+            width:min(100%,900px);
+            max-height:92vh;
+            overflow:auto;
+            background:#0c1525;
+            border:1px solid #2a3c58;
+            border-radius:20px;
+            box-shadow:0 30px 100px rgba(0,0,0,.5);
+        }
+
+        .modal-head{
+            position:sticky;
+            top:0;
+            z-index:2;
+            background:#0c1525;
+            border-bottom:1px solid var(--border);
+            padding:17px 20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+
+        .modal-body{
+            padding:20px;
+        }
+
+        .toast{
+            position:fixed;
+            right:22px;
+            bottom:22px;
+            z-index:200;
+            background:#111d31;
+            border:1px solid #334965;
+            padding:12px 15px;
+            border-radius:11px;
+            box-shadow:0 15px 40px rgba(0,0,0,.35);
+            opacity:0;
+            transform:translateY(10px);
+            pointer-events:none;
+            transition:.25s;
+            font-size:12px;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translateY(0);
+        }
+
+        .empty{
+            padding:50px 20px;
+            text-align:center;
+            border:1px dashed #2a3b56;
+            border-radius:18px;
+            color:#72839b;
+        }
+
+        .mobile-menu{
+            display:none;
+        }
+
+        @media(max-width:900px){
+            .sidebar{
+                transform:translateX(-100%);
+                transition:.25s;
+            }
+
+            .sidebar.open{
+                transform:translateX(0);
+            }
+
+            .main{
+                margin-left:0;
+                width:100%;
+            }
+
+            .mobile-menu{
+                display:inline-flex;
+            }
+
+            .stats{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+        }
+
+        @media(max-width:620px){
+            .page{
+                padding:17px;
+            }
+
+            .topbar{
+                padding:0 17px;
+            }
+
+            .hero{
+                padding:22px;
+            }
+
+            .stats{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .form-grid{
+                grid-template-columns:1fr;
+            }
+
+            .lesson-content{
+                padding:19px;
+            }
+
+            .lesson-word{
+                font-size:31px;
+            }
+
+            .lesson-footer{
+                flex-direction:column;
+                align-items:stretch;
+            }
+        }
+
+        .hidden{
+            display:none !important;
+        }
+
+        .muted{
+            color:var(--muted);
+        }
+
+        .danger-text{
+            color:#fb7185;
+        }
+
+        .success-text{
+            color:#5ee7bf;
+        }
+
+        .warning-text{
+            color:#fcd66b;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        forge: {
+                            400: "#38bdf8",
+                            500: "#0ea5e9",
+                            600: "#0284c7"
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body>
+<div class="app-shell">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-icon">LF</div>
+            <div>
+                <div class="brand-title">LexiForge</div>
+                <div class="brand-sub">Advanced English Laboratory</div>
+            </div>
+        </div>
+
+        <div class="nav-section">Workspace</div>
+
+        <button class="nav-btn active" data-view="dashboard">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </button>
+
+        <button class="nav-btn" data-view="library">
+            <span class="nav-icon">▦</span>
+            <span>Word Library</span>
+        </button>
+
+        <button class="nav-btn" data-view="progress">
+            <span class="nav-icon">◔</span>
+            <span>Progress</span>
+        </button>
+
+        <div class="nav-section">Management</div>
+
+        <button class="nav-btn" id="addCardNav">
+            <span class="nav-icon">＋</span>
+            <span>Add Main Card</span>
+        </button>
+
+        <button class="nav-btn" id="resetProgressBtn">
+            <span class="nav-icon">↻</span>
+            <span>Reset Progress</span>
+        </button>
+
+        <div class="progress-box">
+            <div class="progress-label">
+                <span>Course Progress</span>
+                <strong id="sidebarProgressText">0%</strong>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="sidebarProgressFill" style="width:0%"></div>
+            </div>
+            <div style="margin-top:10px;color:#64748b;font-size:10px">
+                Passing quizzes unlock the next main card.
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div style="display:flex;align-items:center;gap:12px">
+                <button class="btn mobile-menu" id="mobileMenu">☰</button>
+                <div>
+                    <div class="top-title" id="topTitle">Learning Dashboard</div>
+                    <div class="top-subtitle" id="topSubtitle">Build deep vocabulary knowledge.</div>
+                </div>
+            </div>
+
+            <div class="top-actions">
+                <button class="btn" id="globalCopyBtn" title="Copy current word">⧉ Copy</button>
+                <button class="btn primary" id="quickAddBtn">＋ Add Card</button>
+            </div>
+        </header>
+
+        <div class="page">
+
+            <!-- DASHBOARD -->
+            <section id="dashboardView">
+
+                <div class="hero">
+                    <div class="eyebrow">Advanced English Learning System</div>
+                    <h1>Learn words deeply, not superficially.</h1>
+                    <p>
+                        LexiForge combines definitions, word families, semantic relationships,
+                        natural dialogue, context variation and gated comprehension quizzes
+                        into one persistent local learning environment.
+                    </p>
+
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-label">Main Cards</div>
+                            <div class="stat-value" id="statTotal">0</div>
+                        </div>
+
+                        <div class="stat">
+                            <div class="stat-label">Mastered</div>
+                            <div class="stat-value success-text" id="statMastered">0</div>
+                        </div>
+
+                        <div class="stat">
+                            <div class="stat-label">Unlocked</div>
+                            <div class="stat-value" id="statUnlocked">0</div>
+                        </div>
+
+                        <div class="stat">
+                            <div class="stat-label">Completion</div>
+                            <div class="stat-value" id="statCompletion">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-head">
+                    <div>
+                        <h2>Learning Path</h2>
+                        <p>Complete each evaluation to unlock the next main card.</p>
+                    </div>
+                    <button class="btn primary" id="continueBtn">Continue Learning →</button>
+                </div>
+
+                <div class="cards-grid" id="dashboardCards"></div>
+            </section>
+
+            <!-- LIBRARY -->
+            <section id="libraryView" class="hidden">
+                <div class="section-head">
+                    <div>
+                        <h2>Word Library</h2>
+                        <p>Browse every main card in your local vocabulary database.</p>
+                    </div>
+
+                    <button class="btn primary" id="libraryAddBtn">＋ New Main Card</button>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-bottom:18px">
+                    <input class="input" id="searchInput" placeholder="Search words, meanings, parts of speech..." />
+                    <select class="select" id="filterSelect" style="max-width:180px">
+                        <option value="all">All Cards</option>
+                        <option value="unlocked">Unlocked</option>
+                        <option value="mastered">Mastered</option>
+                        <option value="locked">Locked</option>
+                    </select>
+                </div>
+
+                <div class="cards-grid" id="libraryCards"></div>
+            </section>
+
+            <!-- PROGRESS -->
+            <section id="progressView" class="hidden">
+                <div class="section-head">
+                    <div>
+                        <h2>Learning Progress</h2>
+                        <p>Your quiz-based mastery state is stored locally.</p>
+                    </div>
+                </div>
+
+                <div class="hero">
+                    <div class="eyebrow">Mastery Overview</div>
+                    <h1 id="progressHeadline">0% Complete</h1>
+                    <p>
+                        A card becomes mastered only after its quiz has been successfully passed.
+                        Editing a mastered card does not erase your existing mastery unless you
+                        explicitly reset progress.
+                    </p>
+                </div>
+
+                <div class="cards-grid" id="progressCards"></div>
+            </section>
+
+            <!-- LESSON -->
+            <section id="lessonView" class="hidden">
+                <div class="lesson-shell">
+                    <div class="lesson-header">
+                        <div class="muted" style="font-size:11px;font-weight:800">
+                            MAIN CARD <span id="lessonNumber">01</span>
+                        </div>
+
+                        <div class="lesson-word" id="lessonWord">Word</div>
+
+                        <div class="lesson-meta">
+                            <span class="badge" id="lessonPOS">noun</span>
+                            <span class="badge" id="lessonTranslation">translation</span>
+                            <span class="badge" id="lessonMastery">Not Mastered</span>
+                        </div>
+                    </div>
+
+                    <div class="lesson-tabs">
+                        <button class="lesson-tab active" data-tab="definition">01 · Definition</button>
+                        <button class="lesson-tab" data-tab="family">02 · Word Family</button>
+                        <button class="lesson-tab" data-tab="relations">03 · Synonyms & Antonyms</button>
+                        <button class="lesson-tab" data-tab="dialogue">04 · Daily Dialogue</button>
+                        <button class="lesson-tab" data-tab="contexts">05 · Context Variations</button>
+                    </div>
+
+                    <div class="lesson-content" id="lessonContent"></div>
+
+                    <div class="lesson-footer">
+                        <button class="btn" id="backToLibraryBtn">← Back to Library</button>
+
+                        <div style="display:flex;gap:8px">
+                            <button class="btn warning hidden" id="editCardBtn">✎ Edit Card</button>
+                            <button class="btn danger hidden" id="deleteCardBtn">Delete</button>
+                            <button class="btn primary" id="quizBtn">Take Mastery Quiz →</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUIZ -->
+            <section id="quizView" class="hidden">
+                <div class="quiz-shell">
+                    <div class="section-head">
+                        <div>
+                            <h2>Mastery Evaluation</h2>
+                            <p id="quizSubtitle">Demonstrate that you understand the word.</p>
+                        </div>
+
+                        <button class="btn" id="quitQuizBtn">Exit Quiz</button>
+                    </div>
+
+                    <div class="quiz-progress">
+                        <div id="quizProgressFill" style="width:0%"></div>
+                    </div>
+
+                    <div class="question-card">
+                        <div class="question-number" id="questionNumber">Question 1 of 5</div>
+                        <div class="question" id="questionText"></div>
+                        <div class="options" id="quizOptions"></div>
+
+                        <div id="quizResult" class="quiz-result hidden"></div>
+
+                        <div style="display:flex;justify-content:flex-end;margin-top:20px">
+                            <button class="btn primary" id="submitAnswerBtn" disabled>
+                                Verify Answer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EDITOR -->
+            <section id="editorView" class="hidden">
+                <div class="section-head">
+                    <div>
+                        <h2 id="editorTitle">Edit Main Card</h2>
+                        <p>
+                            Full editing is available after the card's mastery quiz has been passed.
+                        </p>
+                    </div>
+
+                    <button class="btn" id="cancelEditorBtn">Cancel</button>
+                </div>
+
+                <div class="editor" id="editorContainer"></div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal hidden" id="confirmModal">
+    <div class="modal-card" style="max-width:500px">
+        <div class="modal-head">
+            <strong id="modalTitle">Confirm Action</strong>
+            <button class="btn" id="modalClose">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <p id="modalText" class="muted" style="line-height:1.7"></p>
+
+            <div style="display:flex;justify-content:flex-end;gap:9px;margin-top:20px">
+                <button class="btn" id="modalCancel">Cancel</button>
+                <button class="btn danger" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- IMPORTANT: data.js must be in the same directory -->
+<script src="data.js"></script>
+
+<script>
+"use strict";
+
+/* ============================================================
+   LEXIFORGE APPLICATION ENGINE
+   ============================================================ */
+
+const STORAGE_KEY = "lexiforge_v1";
+const DATA_VERSION = 1;
+
+let state = {
+    cards: [],
+    completed: {},
+    unlocked: 0,
+    currentCardId: null,
+    currentTab: "definition",
+    currentView: "dashboard",
+    quiz: null,
+    version: DATA_VERSION
+};
+
+let toastTimer = null;
+
+const $ = id => document.getElementById(id);
+
+function deepClone(value){
+    return JSON.parse(JSON.stringify(value));
+}
+
+function uid(prefix = "card"){
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
+}
+
+function escapeHTML(value){
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function showToast(message){
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateGlobalStats();
+}
+
+function loadState(){
+    try{
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        if(saved && Array.isArray(saved.cards)){
+            state = {
+                ...state,
+                ...saved,
+                cards: saved.cards,
+                completed: saved.completed || {},
+                unlocked: Number.isInteger(saved.unlocked) ? saved.unlocked : 0
+            };
+
+            synchronizeWithDefaultData();
+            return;
+        }
+    }catch(error){
+        console.warn("Could not load saved state:", error);
+    }
+
+    state.cards = deepClone(window.LEXIFORGE_DATA || []);
+    state.cards.forEach(card => {
+        card.id = card.id || uid("card");
+    });
+
+    state.completed = {};
+    state.unlocked = state.cards.length ? 0 : -1;
+
+    saveState();
+}
+
+function synchronizeWithDefaultData(){
+    /*
+        Existing user modifications are authoritative.
+
+        New default cards added to data.js are automatically appended
+        if their stable sourceId is not already present.
+    */
+
+    const defaults = deepClone(window.LEXIFORGE_DATA || []);
+
+    const existingSourceIds = new Set(
+        state.cards.map(card => card.sourceId).filter(Boolean)
+    );
+
+    let changed = false;
+
+    defaults.forEach(defaultCard => {
+        if(defaultCard.sourceId && !existingSourceIds.has(defaultCard.sourceId)){
+            defaultCard.id = uid("card");
+            state.cards.push(defaultCard);
+            changed = true;
+        }
+    });
+
+    if(changed){
+        saveState();
+    }
+}
+
+function getCard(index){
+    return state.cards[index] || null;
+}
+
+function getCardIndexById(id){
+    return state.cards.findIndex(card => card.id === id);
+}
+
+function isUnlocked(index){
+    return index >= 0 && index <= state.unlocked;
+}
+
+function isMastered(index){
+    const card = getCard(index);
+    return card ? Boolean(state.completed[card.id]) : false;
+}
+
+function updateUnlockState(){
+    /*
+        Sequential gated progression:
+        Card N unlocks Card N+1 only after N is passed.
+    */
+
+    let highest = 0;
+
+    for(let i = 0; i < state.cards.length; i++){
+        if(i === 0){
+            highest = 0;
+            continue;
+        }
+
+        const previous = state.cards[i - 1];
+
+        if(state.completed[previous.id]){
+            highest = i;
+        }else{
+            break;
+        }
+    }
+
+    state.unlocked = Math.min(
+        Math.max(highest, 0),
+        Math.max(state.cards.length - 1, 0)
+    );
+}
+
+function updateGlobalStats(){
+    const total = state.cards.length;
+    const mastered = state.cards.filter(card => state.completed[card.id]).length;
+    const unlocked = Math.min(state.unlocked + 1, total);
+    const completion = total ? Math.round((mastered / total) * 100) : 0;
+
+    $("statTotal").textContent = total;
+    $("statMastered").textContent = mastered;
+    $("statUnlocked").textContent = unlocked;
+    $("statCompletion").textContent = `${completion}%`;
+
+    $("sidebarProgressText").textContent = `${completion}%`;
+    $("sidebarProgressFill").style.width = `${completion}%`;
+
+    if($("progressHeadline")){
+        $("progressHeadline").textContent = `${completion}% Complete`;
+    }
+}
+
+function setView(view){
+    state.currentView = view;
+
+    document.querySelectorAll("[data-view]").forEach(button => {
+        button.classList.toggle("active", button.dataset.view === view);
+    });
+
+    ["dashboard","library","progress","lesson","quiz","editor"].forEach(name => {
+        const element = $(`${name}View`);
+
+        if(element){
+            element.classList.toggle("hidden", name !== view);
+        }
+    });
+
+    const titles = {
+        dashboard: ["Learning Dashboard","Build deep vocabulary knowledge."],
+        library: ["Word Library","Explore your complete local vocabulary database."],
+        progress: ["Learning Progress","Track mastery and unlock progression."],
+        lesson: ["Deep Study","Explore the complete linguistic profile."],
+        quiz: ["Mastery Evaluation","Verify comprehension before progressing."],
+        editor: ["Card Editor","Modify your learning content."]
+    };
+
+    const info = titles[view] || titles.dashboard;
+
+    $("topTitle").textContent = info[0];
+    $("topSubtitle").textContent = info[1];
+
+    window.scrollTo({top:0,behavior:"smooth"});
+
+    if(view === "dashboard") renderDashboard();
+    if(view === "library") renderLibrary();
+    if(view === "progress") renderProgress();
+}
+
+function cardStatusHTML(index){
+    if(isMastered(index)) return `<span class="card-status success-text">✓</span>`;
+    if(isUnlocked(index)) return `<span class="card-status warning-text">●</span>`;
+    return `<span class="card-status">🔒</span>`;
+}
+
+function cardHTML(card,index){
+    const unlocked = isUnlocked(index);
+    const mastered = isMastered(index);
+
+    return `
+        <article class="word-card ${unlocked ? "" : "locked"}"
+                 data-card-index="${index}">
+            ${cardStatusHTML(index)}
+
+            <div class="word-number">
+                CARD ${String(index + 1).padStart(2,"0")}
+            </div>
+
+            <div class="word">${escapeHTML(card.word)}</div>
+
+            <span class="pos">${escapeHTML(card.partOfSpeech)}</span>
+
+            <div class="translation">
+                ${escapeHTML(card.translation)}
+            </div>
+
+            <div style="display:flex;gap:7px;margin-top:17px">
+                <button class="btn ${unlocked ? "primary" : ""}"
+                        data-open-card="${index}"
+                        style="flex:1">
+                    ${unlocked ? "Study Card →" : "Locked"}
+                </button>
+            </div>
+
+            <div style="margin-top:10px;font-size:10px;color:#65758d">
+                ${mastered ? "Mastery quiz passed" :
+                  unlocked ? "Quiz required for progression" :
+                  "Pass previous card to unlock"}
+            </div>
+        </article>
+    `;
+}
+
+function renderDashboard(){
+    updateGlobalStats();
+
+    const container = $("dashboardCards");
+
+    if(!state.cards.length){
+        container.innerHTML = `
+            <div class="empty">
+                <h3>Your vocabulary database is empty.</h3>
+                <p>Add your first main card to begin.</p>
+                <button class="btn primary" id="emptyAddBtn">＋ Add Main Card</button>
+            </div>
+        `;
+
+        $("emptyAddBtn")?.addEventListener("click",openNewCardEditor);
+        return;
+    }
+
+    container.innerHTML = state.cards
+        .map((card,index) => cardHTML(card,index))
+        .join("");
+
+    attachCardEvents();
+}
+
+function renderLibrary(){
+    const query = ($("searchInput")?.value || "").trim().toLowerCase();
+    const filter = $("filterSelect")?.value || "all";
+
+    const filtered = state.cards
+        .map((card,index) => ({card,index}))
+        .filter(({card,index}) => {
+            const text = [
+                card.word,
+                card.translation,
+                card.partOfSpeech,
+                card.definition?.english,
+                card.definition?.arabic
+            ].join(" ").toLowerCase();
+
+            const matchesSearch = !query || text.includes(query);
+
+            let matchesFilter = true;
+
+            if(filter === "unlocked"){
+                matchesFilter = isUnlocked(index);
+            }
+
+            if(filter === "mastered"){
+                matchesFilter = isMastered(index);
+            }
+
+            if(filter === "locked"){
+                matchesFilter = !isUnlocked(index);
+            }
+
+            return matchesSearch && matchesFilter;
+        });
+
+    const container = $("libraryCards");
+
+    if(!filtered.length){
+        container.innerHTML = `
+            <div class="empty">
+                No cards match your current search/filter.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered
+        .map(({card,index}) => cardHTML(card,index))
+        .join("");
+
+    attachCardEvents();
+}
+
+function renderProgress(){
+    updateGlobalStats();
+
+    const container = $("progressCards");
+
+    container.innerHTML = state.cards.map((card,index) => {
+        const mastered = isMastered(index);
+        const unlocked = isUnlocked(index);
+
+        return `
+            <div class="info-card">
+                <div style="display:flex;justify-content:space-between;gap:10px">
+                    <div>
+                        <div class="info-label">Card ${String(index+1).padStart(2,"0")}</div>
+                        <div class="info-word">${escapeHTML(card.word)}</div>
+                    </div>
+
+                    <div>
+                        ${mastered
+                            ? `<span class="success-text" style="font-size:20px">✓</span>`
+                            : unlocked
+                                ? `<span class="warning-text">●</span>`
+                                : `<span>🔒</span>`
+                        }
+                    </div>
+                </div>
+
+                <div class="info-text">
+                    ${mastered
+                        ? "Mastery evaluation successfully completed."
+                        : unlocked
+                            ? "Available for study and evaluation."
+                            : "Locked until the previous card is mastered."
+                    }
+                </div>
+
+                <button class="btn" style="margin-top:14px"
+                        data-open-card="${index}"
+                        ${unlocked ? "" : "disabled"}>
+                    Open
+                </button>
+            </div>
+        `;
+    }).join("");
+
+    attachCardEvents();
+}
+
+function attachCardEvents(){
+    document.querySelectorAll("[data-open-card]").forEach(button => {
+        button.addEventListener("click", () => {
+            const index = Number(button.dataset.openCard);
+
+            if(!isUnlocked(index)){
+                showToast("This card is locked. Pass the previous mastery quiz first.");
+                return;
+            }
+
+            openLesson(index);
+        });
+    });
+}
+
+function openLesson(index){
+    const card = getCard(index);
+
+    if(!card || !isUnlocked(index)){
+        showToast("This card is currently locked.");
+        return;
+    }
+
+    state.currentCardId = card.id;
+    state.currentTab = "definition";
+
+    $("lessonNumber").textContent = String(index + 1).padStart(2,"0");
+    $("lessonWord").textContent = card.word;
+    $("lessonPOS").textContent = card.partOfSpeech;
+    $("lessonTranslation").textContent = card.translation;
+
+    $("lessonMastery").textContent =
+        isMastered(index) ? "✓ Mastered" : "Quiz Required";
+
+    $("lessonMastery").className =
+        `badge ${isMastered(index) ? "success-text" : "warning-text"}`;
+
+    document.querySelectorAll(".lesson-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tab === "definition");
+    });
+
+    renderLessonTab();
+
+    $("editCardBtn").classList.toggle("hidden", !isMastered(index));
+    $("deleteCardBtn").classList.remove("hidden");
+
+    setView("lesson");
+}
+
+function renderLessonTab(){
+    const index = getCardIndexById(state.currentCardId);
+    const card = getCard(index);
+
+    if(!card) return;
+
+    const content = $("lessonContent");
+
+    document.querySelectorAll(".lesson-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tab === state.currentTab);
+    });
+
+    if(state.currentTab === "definition"){
+        content.innerHTML = `
+            <h2 class="content-title">Precise Definition</h2>
+            <div class="content-sub">
+                Understand the core semantic meaning before studying the extended usage.
+            </div>
+
+            <div class="definition-box">
+                <div class="copy-row">
+                    <div class="copyable">
+                        <div class="definition-main">
+                            ${escapeHTML(card.definition.english)}
+                        </div>
+
+                        <div class="arabic">
+                            ${escapeHTML(card.definition.arabic)}
+                        </div>
+                    </div>
+
+                    ${copyButton(
+                        `${card.word}: ${card.definition.english}\n${card.definition.arabic}`
+                    )}
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="info-label">Example</div>
+
+                <div class="copy-row" style="margin-top:8px">
+                    <div class="copyable">
+                        <div style="line-height:1.7">
+                            ${escapeHTML(card.definition.example)}
+                        </div>
+
+                        <div class="arabic">
+                            ${escapeHTML(card.definition.exampleTranslation)}
+                        </div>
+                    </div>
+
+                    ${copyButton(card.definition.example)}
+                </div>
+            </div>
+
+            <div class="example-box">
+                <div class="info-label">Usage Note</div>
+                <div class="info-text" style="margin-top:8px">
+                    ${escapeHTML(card.definition.usage)}
+                </div>
+            </div>
+        `;
+    }
+
+    if(state.currentTab === "family"){
+        content.innerHTML = `
+            <h2 class="content-title">Word Family</h2>
+            <div class="content-sub">
+                Study how the concept changes when its grammatical form changes.
+            </div>
+
+            <div class="family-grid">
+                ${card.family.map(item => `
+                    <div class="info-card">
+                        <div class="info-label">${escapeHTML(item.partOfSpeech)}</div>
+
+                        <div class="copy-row">
+                            <div class="copyable">
+                                <div class="info-word">${escapeHTML(item.word)}</div>
+                                <div class="info-text">
+                                    ${escapeHTML(item.meaning)}
+                                </div>
+                                <div class="arabic">
+                                    ${escapeHTML(item.arabic)}
+                                </div>
+                            </div>
+
+                            ${copyButton(item.word)}
+                        </div>
+
+                        <div class="example-box">
+                            ${escapeHTML(item.example)}
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    if(state.currentTab === "relations"){
+        content.innerHTML = `
+            <h2 class="content-title">Synonyms & Antonyms</h2>
+            <div class="content-sub">
+                Do not treat synonyms as identical. Examine the semantic differences.
+            </div>
+
+            <div class="relation-grid">
+                <div class="info-card">
+                    <div class="info-label">Synonyms</div>
+
+                    ${card.synonyms.map(item => `
+                        <div style="padding:12px 0;border-bottom:1px solid #22334c">
+                            <div class="copy-row">
+                                <div class="copyable">
+                                    <strong>${escapeHTML(item.word)}</strong>
+                                    <div class="info-text">
+                                        ${escapeHTML(item.explanation)}
+                                    </div>
+                                    <div class="arabic">
+                                        ${escapeHTML(item.arabic)}
+                                    </div>
+                                </div>
+
+                                ${copyButton(item.word)}
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+
+                <div class="info-card">
+                    <div class="info-label">Antonyms</div>
+
+                    ${card.antonyms.map(item => `
+                        <div style="padding:12px 0;border-bottom:1px solid #22334c">
+                            <div class="copy-row">
+                                <div class="copyable">
+                                    <strong>${escapeHTML(item.word)}</strong>
+                                    <div class="info-text">
+                                        ${escapeHTML(item.explanation)}
+                                    </div>
+                                    <div class="arabic">
+                                        ${escapeHTML(item.arabic)}
+                                    </div>
+                                </div>
+
+                                ${copyButton(item.word)}
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+    }
+
+    if(state.currentTab === "dialogue"){
+        content.innerHTML = `
+            <h2 class="content-title">Daily Dialogue</h2>
+            <div class="content-sub">
+                Follow the word through a realistic conversation.
+            </div>
+
+            <div class="dialogue">
+                ${card.dialogue.map((line,index) => `
+                    <div class="dialogue-row">
+                        <div class="speaker">
+                            ${escapeHTML(line.speaker || (index % 2 ? "B" : "A"))}
+                        </div>
+
+                        <div class="bubble">
+                            <div class="copy-row">
+                                <div class="copyable">
+                                    <div class="bubble-en">
+                                        ${escapeHTML(line.english)}
+                                    </div>
+
+                                    <div class="bubble-ar">
+                                        ${escapeHTML(line.arabic)}
+                                    </div>
+                                </div>
+
+                                ${copyButton(line.english)}
+                            </div>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    if(state.currentTab === "contexts"){
+        content.innerHTML = `
+            <h2 class="content-title">Context Variations</h2>
+            <div class="content-sub">
+                The same word may shift meaning depending on domain and situation.
+            </div>
+
+            <div class="context-grid">
+                ${card.contexts.map((context,index) => `
+                    <div class="info-card">
+                        <div class="context-number">${index + 1}</div>
+
+                        <div class="context-title">
+                            ${escapeHTML(context.title)}
+                        </div>
+
+                        <div class="info-text">
+                            ${escapeHTML(context.explanation)}
+                        </div>
+
+                        <div class="context-example">
+                            <div class="copy-row">
+                                <div class="copyable">
+                                    “${escapeHTML(context.example)}”
+                                    <div class="arabic">
+                                        ${escapeHTML(context.arabic)}
+                                    </div>
+                                </div>
+
+                                ${copyButton(context.example)}
+                            </div>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    attachCopyEvents();
+}
+
+function copyButton(text){
+    return `
+        <button class="mini-copy" data-copy="${escapeHTML(text)}" title="Copy">
+            ⧉
+        </button>
+    `;
+}
+
+function attachCopyEvents(){
+    document.querySelectorAll("[data-copy]").forEach(button => {
+        button.addEventListener("click", async event => {
+            event.stopPropagation();
+
+            const text = button.dataset.copy;
+
+            try{
+                await navigator.clipboard.writeText(text);
+                showToast("Copied to clipboard.");
+            }catch(error){
+                fallbackCopy(text);
+            }
+        });
+    });
+}
+
+function fallbackCopy(text){
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+
+    try{
+        document.execCommand("copy");
+        showToast("Copied to clipboard.");
+    }catch(error){
+        showToast("Clipboard access is unavailable.");
+    }
+
+    area.remove();
+}
+
+/* ============================================================
+   QUIZ ENGINE
+   ============================================================ */
+
+function createQuiz(index){
+    const card = getCard(index);
+
+    if(!card) return null;
+
+    const questions = deepClone(card.quiz || []);
+
+    /*
+        Question order is randomized for every attempt.
+    */
+
+    shuffle(questions);
+
+    /*
+        Only five questions are used by the standard data model.
+        If future cards contain more, five are selected.
+    */
+
+    const selected = questions.slice(0,5);
+
+    selected.forEach(question => {
+        shuffle(question.options);
+    });
+
+    return {
+        cardId: card.id,
+        questions: selected,
+        current: 0,
+        selectedAnswer: null,
+        score: 0,
+        answered: false,
+        finished: false
+    };
+}
+
+function shuffle(array){
+    for(let i = array.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i],array[j]] = [array[j],array[i]];
+    }
+
+    return array;
+}
+
+function startQuiz(){
+    const index = getCardIndexById(state.currentCardId);
+
+    if(index < 0) return;
+
+    state.quiz = createQuiz(index);
+
+    if(!state.quiz || !state.quiz.questions.length){
+        showToast("This card has no quiz data.");
+        return;
+    }
+
+    setView("quiz");
+    renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+    const quiz = state.quiz;
+
+    if(!quiz) return;
+
+    const question = quiz.questions[quiz.current];
+
+    $("questionNumber").textContent =
+        `Question ${quiz.current + 1} of ${quiz.questions.length}`;
+
+    $("questionText").textContent = question.question;
+
+    $("quizProgressFill").style.width =
+        `${(quiz.current / quiz.questions.length) * 100}%`;
+
+    $("quizOptions").innerHTML = question.options.map((option,index) => `
+        <button class="option"
+                data-option-index="${index}">
+            ${escapeHTML(option.text)}
+        </button>
+    `).join("");
+
+    $("quizResult").className = "quiz-result hidden";
+    $("quizResult").innerHTML = "";
+
+    $("submitAnswerBtn").disabled = true;
+    $("submitAnswerBtn").textContent = "Verify Answer";
+
+    quiz.selectedAnswer = null;
+    quiz.answered = false;
+
+    document.querySelectorAll("[data-option-index]").forEach(button => {
+        button.addEventListener("click", () => {
+            if(quiz.answered) return;
+
+            document.querySelectorAll("[data-option-index]")
+                .forEach(item => item.classList.remove("selected"));
+
+            button.classList.add("selected");
+
+            quiz.selectedAnswer =
+                Number(button.dataset.optionIndex);
+
+            $("submitAnswerBtn").disabled = false;
+        });
+    });
+}
+
+function verifyAnswer(){
+    const quiz = state.quiz;
+
+    if(!quiz || quiz.answered) return;
+
+    if(quiz.selectedAnswer === null){
+        showToast("Select an answer first.");
+        return;
+    }
+
+    const question = quiz.questions[quiz.current];
+    const selected = question.options[quiz.selectedAnswer];
+
+    quiz.answered = true;
+
+    document.querySelectorAll("[data-option-index]").forEach(button => {
+        const index = Number(button.dataset.optionIndex);
+        const option = question.options[index];
+
+        if(option.correct){
+            button.classList.add("correct");
+        }
+
+        if(index === quiz.selectedAnswer && !option.correct){
+            button.classList.add("wrong");
+        }
+
+        button.disabled = true;
+    });
+
+    if(selected.correct){
+        quiz.score++;
+        $("quizResult").className = "quiz-result pass";
+        $("quizResult").innerHTML = `
+            <strong class="success-text">Correct.</strong>
+            <div class="muted" style="margin-top:5px">
+                ${escapeHTML(question.explanation || "Good comprehension.")}
+            </div>
+        `;
+    }else{
+        $("quizResult").className = "quiz-result fail";
+        $("quizResult").innerHTML = `
+            <strong class="danger-text">Not quite.</strong>
+            <div class="muted" style="margin-top:5px">
+                ${escapeHTML(question.explanation || "Review the lesson carefully.")}
+            </div>
+        `;
+    }
+
+    $("quizResult").classList.remove("hidden");
+
+    if(quiz.current === quiz.questions.length - 1){
+        $("submitAnswerBtn").textContent = "Finish Evaluation";
+    }else{
+        $("submitAnswerBtn").textContent = "Next Question →";
+    }
+}
+
+function advanceQuiz(){
+    const quiz = state.quiz;
+
+    if(!quiz || !quiz.answered) return;
+
+    if(quiz.current < quiz.questions.length - 1){
+        quiz.current++;
+        renderQuizQuestion();
+        return;
+    }
+
+    finishQuiz();
+}
+
+function finishQuiz(){
+    const quiz = state.quiz;
+
+    if(!quiz) return;
+
+    const index = getCardIndexById(quiz.cardId);
+
+    if(index < 0) return;
+
+    /*
+        80% threshold = 4/5.
+        A failed evaluation never unlocks the next card.
+    */
+
+    const required = Math.ceil(quiz.questions.length * 0.8);
+    const passed = quiz.score >= required;
+
+    quiz.finished = true;
+
+    $("quizProgressFill").style.width = "100%";
+
+    if(passed){
+        state.completed[quiz.cardId] = true;
+
+        updateUnlockState();
+        saveState();
+
+        showToast("Mastery achieved. The next card is now unlocked.");
+
+        setTimeout(() => {
+            state.quiz = null;
+            openLesson(index);
+        }, 800);
+
+    }else{
+        state.completed[quiz.cardId] = false;
+
+        saveState();
+
+        $("quizResult").className = "quiz-result fail";
+        $("quizResult").innerHTML = `
+            <strong class="danger-text">
+                Evaluation not passed.
+            </strong>
+
+            <div style="margin-top:7px">
+                Score:
+                <strong>${quiz.score}/${quiz.questions.length}</strong>
+            </div>
+
+            <div class="muted" style="margin-top:6px">
+                You need at least ${required}/${quiz.questions.length}
+                correct answers. Review the lesson and try again.
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:15px">
+                <button class="btn primary" id="retryQuizInternal">
+                    Retry Quiz
+                </button>
+
+                <button class="btn" id="returnLessonInternal">
+                    Review Lesson
+                </button>
+            </div>
+        `;
+
+        $("submitAnswerBtn").disabled = true;
+
+        $("retryQuizInternal").addEventListener("click",() => {
+            startQuiz();
+        });
+
+        $("returnLessonInternal").addEventListener("click",() => {
+            state.quiz = null;
+            openLesson(index);
+        });
+    }
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+
+function openEditor(index){
+    const card = getCard(index);
+
+    if(!card) return;
+
+    if(!isMastered(index)){
+        showToast("Pass the mastery quiz before editing this card.");
+        return;
+    }
+
+    state.currentCardId = card.id;
+
+    $("editorTitle").textContent = `Edit: ${card.word}`;
+
+    renderEditor(card,false);
+    setView("editor");
+}
+
+function openNewCardEditor(){
+    const blank = createBlankCard();
+
+    state.currentCardId = blank.id;
+
+    $("editorTitle").textContent = "Create New Main Card";
+
+    renderEditor(blank,true);
+    setView("editor");
+}
+
+function createBlankCard(){
+    return {
+        id: uid("card"),
+        sourceId: null,
+        word: "",
+        partOfSpeech: "noun",
+        translation: "",
+        definition: {
+            english: "",
+            arabic: "",
+            example: "",
+            exampleTranslation: "",
+            usage: ""
+        },
+        family: [
+            {partOfSpeech:"noun",word:"",meaning:"",arabic:"",example:""},
+            {partOfSpeech:"verb",word:"",meaning:"",arabic:"",example:""},
+            {partOfSpeech:"adjective",word:"",meaning:"",arabic:"",example:""},
+            {partOfSpeech:"adverb",word:"",meaning:"",arabic:"",example:""}
+        ],
+        synonyms: [
+            {word:"",explanation:"",arabic:""},
+            {word:"",explanation:"",arabic:""},
+            {word:"",explanation:"",arabic:""}
+        ],
+        antonyms: [
+            {word:"",explanation:"",arabic:""},
+            {word:"",explanation:"",arabic:""},
+            {word:"",explanation:"",arabic:""}
+        ],
+        dialogue: Array.from({length:8},(_,i) => ({
+            speaker:i % 2 === 0 ? "A" : "B",
+            english:"",
+            arabic:""
+        })),
+        contexts: Array.from({length:5},(_,i) => ({
+            title:`Context ${i+1}`,
+            explanation:"",
+            example:"",
+            arabic:""
+        })),
+        quiz: Array.from({length:5},() => ({
+            question:"",
+            options:[
+                {text:"",correct:true},
+                {text:"",correct:false},
+                {text:"",correct:false},
+                {text:"",correct:false}
+            ],
+            explanation:""
+        }))
+    };
+}
+
+function renderEditor(card,isNew){
+    const container = $("editorContainer");
+
+    container.innerHTML = `
+        <div class="editor-section">
+            <h3>1. Main Word</h3>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label>Word</label>
+                    <input class="input" data-field="word"
+                           value="${escapeHTML(card.word)}">
+                </div>
+
+                <div class="field">
+                    <label>Part of Speech</label>
+                    <select class="select" data-field="partOfSpeech">
+                        ${[
+                            "noun",
+                            "verb",
+                            "adjective",
+                            "adverb",
+                            "phrasal verb",
+                            "idiom"
+                        ].map(pos =>
+                            `<option ${card.partOfSpeech === pos ? "selected" : ""}>
+                                ${pos}
+                            </option>`
+                        ).join("")}
+                    </select>
+                </div>
+
+                <div class="field full">
+                    <label>Primary Translation</label>
+                    <input class="input" data-field="translation"
+                           value="${escapeHTML(card.translation)}">
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>2. Definition & Explanation</h3>
+
+            <div class="form-grid">
+                ${editorTextarea(
+                    "Definition — English",
+                    "definition.english",
+                    card.definition.english
+                )}
+
+                ${editorTextarea(
+                    "Definition — Arabic",
+                    "definition.arabic",
+                    card.definition.arabic
+                )}
+
+                ${editorTextarea(
+                    "Example Sentence",
+                    "definition.example",
+                    card.definition.example
+                )}
+
+                ${editorTextarea(
+                    "Example Translation",
+                    "definition.exampleTranslation",
+                    card.definition.exampleTranslation
+                )}
+
+                ${editorTextarea(
+                    "Usage Note",
+                    "definition.usage",
+                    card.definition.usage,
+                    true
+                )}
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>3. Word Family</h3>
+
+            <div id="familyEditor">
+                ${card.family.map((item,index) => `
+                    <div class="family-editor-row">
+                        <div class="form-grid">
+                            ${editorInput(
+                                `Part of Speech ${index+1}`,
+                                `family.${index}.partOfSpeech`,
+                                item.partOfSpeech
+                            )}
+
+                            ${editorInput(
+                                `Word ${index+1}`,
+                                `family.${index}.word`,
+                                item.word
+                            )}
+
+                            ${editorInput(
+                                "Meaning",
+                                `family.${index}.meaning`,
+                                item.meaning,
+                                true
+                            )}
+
+                            ${editorInput(
+                                "Arabic Explanation",
+                                `family.${index}.arabic`,
+                                item.arabic,
+                                true
+                            )}
+
+                            ${editorInput(
+                                "Example",
+                                `family.${index}.example`,
+                                item.example,
+                                true
+                            )}
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>4. Synonyms & Antonyms</h3>
+
+            <div class="form-grid">
+                <div>
+                    <div class="info-label" style="margin-bottom:10px">
+                        Synonyms
+                    </div>
+
+                    ${card.synonyms.map((item,index) => `
+                        <div class="relation-editor-row">
+                            ${editorInput(
+                                "Word",
+                                `synonyms.${index}.word`,
+                                item.word
+                            )}
+                            ${editorInput(
+                                "Explanation",
+                                `synonyms.${index}.explanation`,
+                                item.explanation,
+                                true
+                            )}
+                            ${editorInput(
+                                "Arabic",
+                                `synonyms.${index}.arabic`,
+                                item.arabic,
+                                true
+                            )}
+                        </div>
+                    `).join("")}
+                </div>
+
+                <div>
+                    <div class="info-label" style="margin-bottom:10px">
+                        Antonyms
+                    </div>
+
+                    ${card.antonyms.map((item,index) => `
+                        <div class="relation-editor-row">
+                            ${editorInput(
+                                "Word",
+                                `antonyms.${index}.word`,
+                                item.word
+                            )}
+                            ${editorInput(
+                                "Explanation",
+                                `antonyms.${index}.explanation`,
+                                item.explanation,
+                                true
+                            )}
+                            ${editorInput(
+                                "Arabic",
+                                `antonyms.${index}.arabic`,
+                                item.arabic,
+                                true
+                            )}
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>5. Daily Dialogue</h3>
+
+            <div id="dialogueEditor">
+                ${card.dialogue.map((line,index) => `
+                    <div class="dialogue-editor-row">
+                        <div class="form-grid">
+                            ${editorInput(
+                                `Speaker ${index+1}`,
+                                `dialogue.${index}.speaker`,
+                                line.speaker
+                            )}
+
+                            ${editorInput(
+                                `English Sentence`,
+                                `dialogue.${index}.english`,
+                                line.english,
+                                true
+                            )}
+
+                            ${editorInput(
+                                `Arabic Translation`,
+                                `dialogue.${index}.arabic`,
+                                line.arabic,
+                                true
+                            )}
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>6. Context Variations</h3>
+
+            <div id="contextEditor">
+                ${card.contexts.map((context,index) => `
+                    <div class="context-editor-row">
+                        <div class="form-grid">
+                            ${editorInput(
+                                `Context ${index+1} Title`,
+                                `contexts.${index}.title`,
+                                context.title
+                            )}
+
+                            ${editorInput(
+                                "Explanation",
+                                `contexts.${index}.explanation`,
+                                context.explanation,
+                                true
+                            )}
+
+                            ${editorInput(
+                                "Example",
+                                `contexts.${index}.example`,
+                                context.example,
+                                true
+                            )}
+
+                            ${editorInput(
+                                "Arabic Explanation",
+                                `contexts.${index}.arabic`,
+                                context.arabic,
+                                true
+                            )}
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>7. Mastery Quiz</h3>
+
+            <p class="muted" style="font-size:12px;line-height:1.6">
+                Each question requires one correct answer. The application
+                automatically shuffles both question order and answer choices
+                during evaluation.
+            </p>
+
+            ${card.quiz.map((question,index) => `
+                <div class="relation-editor-row" data-quiz-editor="${index}">
+                    <div class="field">
+                        <label>Question ${index+1}</label>
+                        <textarea class="textarea"
+                            data-path="quiz.${index}.question">${escapeHTML(question.question)}</textarea>
+                    </div>
+
+                    <div class="form-grid" style="margin-top:12px">
+                        ${question.options.map((option,optIndex) => `
+                            <div class="field">
+                                <label>
+                                    Option ${optIndex+1}
+                                    ${option.correct ? "✓ Correct" : ""}
+                                </label>
+
+                                <input class="input"
+                                    data-path="quiz.${index}.options.${optIndex}.text"
+                                    value="${escapeHTML(option.text)}">
+                            </div>
+                        `).join("")}
+                    </div>
+
+                    <div class="field" style="margin-top:12px">
+                        <label>Explanation</label>
+                        <textarea class="textarea"
+                            data-path="quiz.${index}.explanation">${escapeHTML(question.explanation)}</textarea>
+                    </div>
+
+                    <div style="margin-top:10px">
+                        <label class="muted" style="font-size:11px">
+                            Correct option:
+                            <select class="select" style="max-width:200px"
+                                    data-quiz-correct="${index}">
+                                ${question.options.map((option,optIndex) => `
+                                    <option value="${optIndex}"
+                                        ${option.correct ? "selected" : ""}>
+                                        Option ${optIndex+1}
+                                    </option>
+                                `).join("")}
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            `).join("")}
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:9px;padding-bottom:30px">
+            <button class="btn" id="editorCancelBottom">Cancel</button>
+            <button class="btn primary" id="saveEditorBtn">
+                ${isNew ? "Create Main Card" : "Save Changes"}
+            </button>
+        </div>
+    `;
+
+    $("saveEditorBtn").addEventListener("click",() => {
+        saveEditor(isNew);
+    });
+
+    $("editorCancelBottom").addEventListener("click",() => {
+        if(isNew){
+            setView("dashboard");
+        }else{
+            openLesson(getCardIndexById(state.currentCardId));
+        }
+    });
+}
+
+function editorInput(label,path,value,full=false){
+    return `
+        <div class="field ${full ? "full" : ""}">
+            <label>${escapeHTML(label)}</label>
+            <input class="input"
+                   data-path="${escapeHTML(path)}"
+                   value="${escapeHTML(value)}">
+        </div>
+    `;
+}
+
+function editorTextarea(label,path,value,full=false){
+    return `
+        <div class="field ${full ? "full" : ""}">
+            <label>${escapeHTML(label)}</label>
+            <textarea class="textarea"
+                      data-path="${escapeHTML(path)}">${escapeHTML(value)}</textarea>
+        </div>
+    `;
+}
+
+function setNested(object,path,value){
+    const parts = path.split(".");
+    let cursor = object;
+
+    for(let i=0;i<parts.length-1;i++){
+        const key = parts[i];
+
+        if(cursor[key] === undefined){
+            cursor[key] = {};
+        }
+
+        cursor = cursor[key];
+    }
+
+    cursor[parts[parts.length-1]] = value;
+}
+
+function getEditorCard(){
+    const index = getCardIndexById(state.currentCardId);
+
+    if(index >= 0){
+        return deepClone(state.cards[index]);
+    }
+
+    return createBlankCard();
+}
+
+function collectEditorData(){
+    const card = getEditorCard();
+
+    document.querySelectorAll("[data-field]").forEach(element => {
+        card[element.dataset.field] = element.value.trim();
+    });
+
+    document.querySelectorAll("[data-path]").forEach(element => {
+        setNested(card,element.dataset.path,element.value.trim());
+    });
+
+    document.querySelectorAll("[data-quiz-correct]").forEach(select => {
+        const questionIndex = Number(select.dataset.quizCorrect);
+        const correctIndex = Number(select.value);
+
+        card.quiz[questionIndex].options.forEach((option,index) => {
+            option.correct = index === correctIndex;
+        });
+    });
+
+    return card;
+}
+
+function validateCard(card){
+    const errors = [];
+
+    if(!card.word.trim()){
+        errors.push("Main word is required.");
+    }
+
+    if(!card.translation.trim()){
+        errors.push("Primary translation is required.");
+    }
+
+    if(!card.definition.english.trim()){
+        errors.push("English definition is required.");
+    }
+
+    if(card.family.length < 1){
+        errors.push("At least one word-family item is required.");
+    }
+
+    if(card.dialogue.length < 8){
+        errors.push("Dialogue must contain at least 8 lines.");
+    }
+
+    if(card.contexts.length < 4){
+        errors.push("At least 4 context variations are required.");
+    }
+
+    if(card.quiz.length < 5){
+        errors.push("Five quiz questions are required.");
+    }
+
+    card.quiz.forEach((question,index) => {
+        if(!question.question.trim()){
+            errors.push(`Quiz question ${index+1} is empty.`);
+        }
+
+        const correctCount =
+            question.options.filter(option => option.correct).length;
+
+        if(correctCount !== 1){
+            errors.push(`Quiz question ${index+1} must have exactly one correct answer.`);
+        }
+
+        if(question.options.some(option => !option.text.trim())){
+            errors.push(`Quiz question ${index+1} contains an empty option.`);
+        }
+    });
+
+    return errors;
+}
+
+function saveEditor(isNew){
+    const card = collectEditorData();
+    const errors = validateCard(card);
+
+    if(errors.length){
+        showToast(errors[0]);
+        return;
+    }
+
+    if(isNew){
+        /*
+            New cards are appended to the learning path.
+            They are not automatically mastered or unlocked.
+        */
+
+        card.id = card.id || uid("card");
+        card.sourceId = null;
+
+        state.cards.push(card);
+
+        if(state.cards.length === 1){
+            state.unlocked = 0;
+        }
+
+        saveState();
+        renderDashboard();
+        showToast("New main card created successfully.");
+        setView("dashboard");
+
+    }else{
+        const index = getCardIndexById(card.id);
+
+        if(index < 0){
+            showToast("Card could not be found.");
+            return;
+        }
+
+        /*
+            Preserve mastery state.
+            Editing does not silently grant or revoke mastery.
+        */
+
+        state.cards[index] = card;
+
+        saveState();
+        showToast("Card changes saved locally.");
+        openLesson(index);
+    }
+}
+
+/* ============================================================
+   DELETE / RESET
+   ============================================================ */
+
+function deleteCurrentCard(){
+    const index = getCardIndexById(state.currentCardId);
+
+    if(index < 0) return;
+
+    const card = state.cards[index];
+
+    openConfirm(
+        "Delete Main Card",
+        `Delete "${card.word}" permanently from your local learning database? This action cannot be undone.`,
+        () => {
+            state.cards.splice(index,1);
+
+            const newCompleted = {};
+
+            state.cards.forEach(cardItem => {
+                if(state.completed[cardItem.id]){
+                    newCompleted[cardItem.id] = true;
+                }
+            });
+
+            state.completed = newCompleted;
+
+            updateUnlockState();
+            saveState();
+
+            state.currentCardId = null;
+
+            showToast("Card deleted.");
+            setView("dashboard");
+        }
+    );
+}
+
+function resetProgress(){
+    openConfirm(
+        "Reset Learning Progress",
+        "This will remove all quiz completion states and return the progression gate to the first card. Your cards, edits and added content will remain.",
+        () => {
+            state.completed = {};
+            state.unlocked = 0;
+
+            saveState();
+
+            showToast("Learning progression has been reset.");
+            renderDashboard();
+        }
+    );
+}
+
+/* ============================================================
+   CONFIRMATION MODAL
+   ============================================================ */
+
+let modalAction = null;
+
+function openConfirm(title,text,action){
+    modalAction = action;
+
+    $("modalTitle").textContent = title;
+    $("modalText").textContent = text;
+
+    $("confirmModal").classList.remove("hidden");
+}
+
+function closeConfirm(){
+    $("confirmModal").classList.add("hidden");
+    modalAction = null;
+}
+
+/* ============================================================
+   EVENT BINDINGS
+   ============================================================ */
+
+function bindEvents(){
+    document.querySelectorAll("[data-view]").forEach(button => {
+        button.addEventListener("click",() => {
+            setView(button.dataset.view);
+
+            if(window.innerWidth <= 900){
+                $("sidebar").classList.remove("open");
+            }
+        });
+    });
+
+    $("mobileMenu").addEventListener("click",() => {
+        $("sidebar").classList.toggle("open");
+    });
+
+    $("quickAddBtn").addEventListener("click",openNewCardEditor);
+    $("addCardNav").addEventListener("click",openNewCardEditor);
+    $("libraryAddBtn").addEventListener("click",openNewCardEditor);
+
+    $("continueBtn").addEventListener("click",() => {
+        const nextIndex = Math.min(
+            state.unlocked,
+            Math.max(state.cards.length - 1,0)
+        );
+
+        if(state.cards.length){
+            openLesson(nextIndex);
+        }
+    });
+
+    $("searchInput").addEventListener("input",renderLibrary);
+    $("filterSelect").addEventListener("change",renderLibrary);
+
+    document.querySelectorAll(".lesson-tab").forEach(tab => {
+        tab.addEventListener("click",() => {
+            state.currentTab = tab.dataset.tab;
+            renderLessonTab();
+        });
+    });
+
+    $("quizBtn").addEventListener("click",startQuiz);
+
+    $("submitAnswerBtn").addEventListener("click",() => {
+        if(state.quiz?.answered){
+            advanceQuiz();
+        }else{
+            verifyAnswer();
+        }
+    });
+
+    $("quitQuizBtn").addEventListener("click",() => {
+        state.quiz = null;
+
+        if(state.currentCardId){
+            openLesson(getCardIndexById(state.currentCardId));
+        }else{
+            setView("dashboard");
+        }
+    });
+
+    $("backToLibraryBtn").addEventListener("click",() => {
+        setView("library");
+    });
+
+    $("editCardBtn").addEventListener("click",() => {
+        openEditor(getCardIndexById(state.currentCardId));
+    });
+
+    $("deleteCardBtn").addEventListener("click",deleteCurrentCard);
+
+    $("cancelEditorBtn").addEventListener("click",() => {
+        const index = getCardIndexById(state.currentCardId);
+
+        if(index >= 0){
+            openLesson(index);
+        }else{
+            setView("dashboard");
+        }
+    });
+
+    $("resetProgressBtn").addEventListener("click",resetProgress);
+
+    $("globalCopyBtn").addEventListener("click",async () => {
+        const index = getCardIndexById(state.currentCardId);
+
+        if(index < 0){
+            showToast("Open a word first.");
+            return;
+        }
+
+        const card = getCard(index);
+
+        try{
+            await navigator.clipboard.writeText(card.word);
+            showToast(`Copied "${card.word}".`);
+        }catch(error){
+            fallbackCopy(card.word);
+        }
+    });
+
+    $("modalClose").addEventListener("click",closeConfirm);
+    $("modalCancel").addEventListener("click",closeConfirm);
+
+    $("modalConfirm").addEventListener("click",() => {
+        if(typeof modalAction === "function"){
+            const action = modalAction;
+            closeConfirm();
+            action();
+        }
+    });
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+
+document.addEventListener("keydown",event => {
+    if(event.key === "Escape"){
+        if(!$("confirmModal").classList.contains("hidden")){
+            closeConfirm();
+        }
+    }
+
+    /*
+        Enter verifies/advances quiz.
+        It does not bypass unanswered questions.
+    */
+
+    if(event.key === "Enter" &&
+       state.currentView === "quiz" &&
+       !event.shiftKey &&
+       !event.ctrlKey &&
+       !event.metaKey){
+
+        const active = document.activeElement;
+
+        if(active?.tagName !== "TEXTAREA" &&
+           active?.tagName !== "INPUT"){
+            event.preventDefault();
+
+            if(!$("submitAnswerBtn").disabled){
+                $("submitAnswerBtn").click();
+            }
+        }
+    }
+});
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+
+function initialize(){
+    if(!window.LEXIFORGE_DATA){
+        document.body.innerHTML = `
+            <div style="padding:40px;color:white;background:#070b14;min-height:100vh">
+                <h1>LexiForge could not load data.js</h1>
+                <p>
+                    Make sure <strong>index.html</strong> and
+                    <strong>data.js</strong> are in the same folder.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    loadState();
+    updateUnlockState();
+    saveState();
+    bindEvents();
+    renderDashboard();
+    setView("dashboard");
+}
+
+initialize();
+</script>
+</body>
+</html>
